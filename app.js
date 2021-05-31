@@ -1,6 +1,7 @@
 const express = require('express');
 const { graphqlHTTP } = require('express-graphql')
 const { buildSchema } = require('graphql')
+const mongoose = require('mongoose')
 
 const app = express();
 
@@ -53,9 +54,24 @@ app.use(
                     date: args.eventInput.date
                 };
                 events.push(event);
+                return event;
             }
         },
         graphiql: true
     }))
 
-app.listen(3333)
+
+mongoose.connect(
+    `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD
+    }@clustergraphqlbooking.deseq.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`,
+    { useNewUrlParser: true, useUnifiedTopology: true }
+)
+    .then(() => {
+        app.listen(3333)
+    })
+    .catch(err => {
+        console.log(err);
+    })
+
+
+// app.listen(3333)
